@@ -25,6 +25,7 @@ class LoginService implements ServiceObject {
     public function prepare(&$curl, array $data) : array {
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $this->loginDetails->method);
         curl_setopt($curl, CURLOPT_AUTOREFERER, false);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
         return [];
     }
 
