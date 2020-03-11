@@ -13,7 +13,7 @@ class AuthService implements ServiceObject {
 
     public function url(array $data) : string {
         $sid = isset($data["sid"]) ? "/?sid=".$data["sid"]->sid : "";
-        return "http://localhost/social-authenticator/auth/json".$sid;
+        return AuthenticatorUrl::get()."/auth/json".$sid;
     }
 
     public function prepare(&$curl, array $data) : array {
@@ -25,12 +25,16 @@ class AuthService implements ServiceObject {
     }
 
     public function callback(int $code, array $exec) {
-        $this->auth = $exec["data"]["auth"];
-        $this->redirect = isset($exec["data"]["details"]["redirectTo"]) ? $exec["data"]["details"]["redirectTo"] : null;
         $this->code = $code;
-        if(isset($exec["data"]["details"]["redirectTo"])) unset($exec["data"]["details"]["redirectTo"]);
-        if(isset($exec["data"]["details"]["redirectMethod"])) unset($exec["data"]["details"]["redirectMethod"]);
-        $this->data = $exec["data"]["details"];
+        if($code != 400) {
+            $this->auth = $exec["data"]["auth"];
+            $this->redirect = isset($exec["data"]["details"]["redirectTo"]) ? $exec["data"]["details"]["redirectTo"] : null;
+            if(isset($exec["data"]["details"]["redirectTo"])) unset($exec["data"]["details"]["redirectTo"]);
+            if(isset($exec["data"]["details"]["redirectMethod"])) unset($exec["data"]["details"]["redirectMethod"]);
+            $this->data = $exec["data"]["details"];
+        } else {
+            $this->auth = false;
+        }
     }
 }
 
