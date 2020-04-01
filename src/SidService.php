@@ -10,7 +10,7 @@ class SidService implements ServiceObject {
 
     public function url(array $data) : string {
         $sid = isset($this->sid) ? "/?sid=".$this->sid : "";
-        return AuthenticatorUrl::get()."/sid/json".$sid;
+        return AuthenticatorUrl::get("sid").$sid;
     }
 
     public function prepare(&$curl, array $data) : array {

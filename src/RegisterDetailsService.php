@@ -5,17 +5,19 @@ namespace Massfice\AuthenticatorServices;
 use Massfice\Service\ServiceObject;
 use Massfice\Service\ServiceData;
 
-class LoginDetailsService implements ServiceObject {
+class RegisterDetailsService implements ServiceObject {
     public $username_field;
     public $password_field;
-    public $sid_field;
+    public $repassword_field;
+    public $firstName_field;
+    public $lastName_field;
     public $endpoint;
     public $success_code;
     public $failure_code;
     public $method;
 
     public function url(array $data) : string {
-        return AuthenticatorUrl::get("login");
+        return AuthenticatorUrl::get("register");
     }
 
     public function prepare(&$curl, array $data) : array {
@@ -33,7 +35,9 @@ class LoginDetailsService implements ServiceObject {
         $this->method = $exec["data"]["Method"];
         $this->username_field = $schema["username"]["field_name"];
         $this->password_field = $schema["password"]["field_name"];
-        $this->sid_field = $schema["sid"]["field_name"];
+        $this->repassword_field = $schema["repassword"]["field_name"];
+        $this->firstName_field = $schema["firstName"]["field_name"];
+        $this->lastName_field = $schema["lastName"]["field_name"];
         $this->endpoint = $api["Endpoint"];
         $this->success_code = $api["ExpectedStatusCode-Success"];
         $this->failure_code = $api["ExpectedStatusCode-Failure"];

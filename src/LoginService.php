@@ -8,8 +8,9 @@ use Massfice\Service\ServiceExecutor;
 
 class LoginService implements ServiceObject {
     private $loginDetails;
-    public $login;
+    public $isSuccess;
     public $code;
+    public $errors;
 
     public function __construct() {
         $loginDetailsService = new LoginDetailsService();
@@ -25,7 +26,6 @@ class LoginService implements ServiceObject {
     public function prepare(&$curl, array $data) : array {
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $this->loginDetails->method);
         curl_setopt($curl, CURLOPT_AUTOREFERER, false);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
         return [];
     }
 
@@ -35,30 +35,18 @@ class LoginService implements ServiceObject {
                 $username_field = $loginDetails->username_field;
                 $password_field = $loginDetails->password_field;
                 $sid_field = $loginDetails->sid_field;
-                $redirect_field = $loginDetails->redirect_field;
 
                 $this->$username_field = $data["username"];
                 $this->$password_field = $data["password"];
                 $this->$sid_field = $data["sid"];
-                $this->$redirect_field = "false";
             }
         };
     }
 
     public function callback(int $code, array $exec) {
-        // $api = $exec["data"]["api"];
-        // $schema = $exec["data"]["schema"];
-
-        // $this->method = $exec["data"]["Method"];
-        // $this->username_field = $schema["username"]["field_name"];
-        // $this->password_field = $schema["password"]["field_name"];
-        // $this->redirect_field = $schema["redirect"]["field_name"];
-        // $this->sid_field = $schema["sid"]["field_name"];
-        // $this->endpoint = $api["Endpoint"];
-        // $this->success_code = $api["ExpectedStatusCode-Success"];
-        // $this->failure_code = $api["ExpectedStatusCode-Failure"];
-        $this->login = $exec;
+        $this->isSuccess = isset($exec["data"]["Status"]) && $exec["data"]["Status"] == "Success" && $code == $this->loginDetails->success_code && $code != $this->loginDetails->failure_code;
         $this->code = $code;
+        $this->errors = isset($exec["errors"]) ? $exec["errors"] : [];
     }
 }
 

@@ -13,7 +13,7 @@ class AuthService implements ServiceObject {
 
     public function url(array $data) : string {
         $sid = isset($data["sid"]) ? "/?sid=".$data["sid"]->sid : "";
-        return AuthenticatorUrl::get()."/auth/json".$sid;
+        return AuthenticatorUrl::get("auth").$sid;
     }
 
     public function prepare(&$curl, array $data) : array {
